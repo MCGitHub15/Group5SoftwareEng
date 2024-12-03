@@ -14,6 +14,7 @@ import message.DepositMessage;
 import message.GetTablesMessage;
 import message.JoinTableMessage;
 import message.LoginMessage;
+import message.LeaveTableMessage;
 import message.WithdrawMessage;
 import model.AbstractTable;
 import model.Account;
@@ -474,7 +475,7 @@ public class ClientGui extends JFrame {
 	public void joinTable() {
 	    // Close the current login frame
 	    this.dispose();
-
+	    
 	    // Create the main application frame
 	    JFrame openGameFrame = new JFrame("Group 5's Awesome Blackjack Game");
 	    openGameFrame.setSize(800, 600); // Adjusted size
@@ -606,6 +607,12 @@ public class ClientGui extends JFrame {
 		
 		Table.getInstance().setTableId(resp);
 		
+		//Send join table message to update player count
+		String tableId = Table.getInstance().getTableId();
+		String userID = StateManager.getInstance().getAccount().getUser().toString();
+		JoinTableMessage jtm = new JoinTableMessage(tableId);
+		SendMessage.getInstance().send(jtm);
+		
 		joinTable();
 		
 //		JOptionPane.showMessageDialog(null, Table.getInstance().getTableId());
@@ -693,6 +700,15 @@ public class ClientGui extends JFrame {
 	}
 	
 	private void playerLeaveTable() {
+		
+		// Close the current login frame
+	    this.dispose();
+	    
+		String tableId = Table.getInstance().getTableId();
+		String userID = StateManager.getInstance().getAccount().getUser().toString();
+		LeaveTableMessage ltm = new LeaveTableMessage(tableId);
+		SendMessage.getInstance().send(ltm);
+		
 		//TODO: send leave table message to server
 		openMainAppFrame();
 	}
